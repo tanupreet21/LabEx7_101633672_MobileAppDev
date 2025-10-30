@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_NAME="books";
 
-    public DBHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+    public DBHelper(@Nullable Context context) {
         // cursor factory is when you're using your own custom cursor factory
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -67,6 +67,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.rawQuery(sql, null);
     }
 
+    public Cursor getBookById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query("books", null, "id=?", new String[]{String.valueOf(id)}, null, null, null);
+    }
+
+
     boolean updateBook(int id, String title, String author, String genre, int year){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -79,8 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return db.update(
                 TABLE_NAME,
-                cv,
-                id + "=?",
+                cv, "id=?",
                 new String[]{String.valueOf(id)}) > 0;
     }
 
@@ -90,8 +95,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         //The delete returns the no of rows affected
         return sqLiteDatabase.delete(
-                TABLE_NAME,
-                id + "=?",
+                TABLE_NAME, "id=?",
                 new String[]{String.valueOf(id)}) > 0;
     }
 }
